@@ -1,0 +1,15 @@
+count=0
+cat blastoutput2.out|grep -v "#"| 
+while read query sub identity alignment length mismatch gap opens qstart qend sstart send evalue bitscore
+do
+
+count=$((count+1));
+echo -e "$count\t$sub\t$alignment\t$identity">> result1_2;
+
+if test $mismatch -gt 20
+then
+echo "$mismatch">> result3;
+fi
+
+done 
+
