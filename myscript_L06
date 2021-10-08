@@ -1,15 +1,49 @@
+#!/usr/bin/bash
+
+# Delete previous output files
+rm -f *.exercise.out
+unset IFS
 count=0
-cat blastoutput2.out|grep -v "#"| 
-while read query sub identity alignment length mismatch gap opens qstart qend sstart send evalue bitscore
+HSPcounter=0
+
+cat blastoutput2.out | grep -v "#" | 
+
+while read query sub identity alignment_length mismatch gap opens qstart qend sstart send evalue bitscore
 do
 
-count=$((count+1));
-echo -e "$count\t$sub\t$alignment\t$identity">> result1_2;
+# List the subject accessio, alignment length and percent ID for all HSPs
+	count=$((count+1))
+	echo -e "$count\t$sub\t$alignment_length\t$identity">> result1_2.exercise.out
 
-if test $mismatch -gt 20
-then
-echo "$mismatch">> result3;
-fi
+# To count mismatches which are more than 20
+	if test $mismatch -gt 20
+	then
+	echo -e "$count\t$query\t$sub\t$mismatch">> result3.exercise.out
+	fi
 
-done 
+# Show more than 20 mismatches and shorter than 100 amino acids
+	if [[ $alignment_length -lt 100 ]] && [[ $mismatches -gt 20 ]]
+	then
+	echo -e "$count\t$alignment_length\t$mismatches" >> result4.exercise.out
+	fi
+
+# List first 20 HSPs that have fewer than 20 mismatches
+	if [[ $mismatches -lt 20 ]]
+	then
+	HSPcounter=$((HSPcounter+1))
+	if test $HSPcounter -le 20
+	then
+	echo -e "$count\t$HSPcounter\t$sub" >> result5.exercise.out
+	fi
+	fi
+
+# HSP shorter than 100 aa
+	if [[ $alignment_length -lt 100 ]]
+	then
+	echo -e "$count\t$sub\t$alignment_length" >> result6.exercise.out
+	fi
+
+# 
+
+done
 
